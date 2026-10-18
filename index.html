@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ForAi Tap — Кликер</title>
+    <meta name="description" content="Полноценная игра-кликер в стиле киберпанк с прокачкой, заданиями и поддержкой Telegram WebApp.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Верхняя панель HUD -->
+        <header class="hud-header">
+            <div class="hud-top-row">
+                <div class="balance-display" aria-label="Баланс монет">
+                    <svg class="icon-coin" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" fill="url(#coinGrad)" stroke="#22D3EE" stroke-width="2"/>
+                        <path d="M12 6v12M15 9.5H10.5C9.67 9.5 9 10.17 9 11s.67 1.5 1.5 1.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5H9" stroke="#080B14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="coinGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#22D3EE"/>
+                                <stop offset="100%" stop-color="#A78BFA"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span id="balance-amount">0</span>
+                </div>
+                <div class="hud-meta">
+                    <div class="level-badge" id="level-badge">Ур. 1</div>
+                    <button class="hud-icon-btn gold-glow" id="daily-modal-toggle" aria-label="Ежедневные награды" title="Ежедневные награды">
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="hud-icon-btn" id="stats-modal-toggle" aria-label="Статистика" title="Статистика игрока">
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                            <path d="M18 20V10M12 20V4M6 20v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="hud-icon-btn" id="haptic-toggle" aria-label="Включить/выключить вибрацию" title="Вибрация тактильного отклика">
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="xp-container" aria-label="Прогресс опыта">
+                <div class="xp-bar-bg">
+                    <div class="xp-bar-fill" id="xp-fill" style="width: 0%;"></div>
+                </div>
+                <div class="xp-text"><span id="xp-current">0</span> / <span id="xp-max">100</span> XP</div>
+            </div>
+
+            <div class="hud-sub-row">
+                <div class="income-banner">
+                    <span>Пассивный доход:</span>
+                    <strong id="income-amount">+0 / сек</strong>
+                </div>
+                <div class="active-buff-badge" id="buff-badge">
+                    ⚡ x2 <span id="buff-timer">0с</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент (Вкладки) -->
+        <main class="main-content">
+            <!-- Вкладка 1: Игра -->
+            <section class="tab-pane active" id="tab-game" data-tab="game">
+                <div class="game-arena" id="drop-arena-container">
+                    <div class="click-effects-container" id="effects-container"></div>
+                    
+                    <button class="tap-core" id="tap-core" aria-label="Энергетическое ядро для тапов">
+                        <div class="core-ring core-ring-1"></div>
+                        <div class="core-ring core-ring-2"></div>
+                        <div class="core-core-inner">
+                            <svg viewBox="0 0 100 100" class="core-svg" aria-hidden="true">
+                                <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="url(#coreGrad)" stroke="#35E7FF" stroke-width="3"/>
+                                <circle cx="50" cy="50" r="20" fill="#080B14" stroke="#A78BFA" stroke-width="4"/>
+                                <path d="M50 35v30M35 50h30" stroke="#22D3EE" stroke-width="4" stroke-linecap="round"/>
+                                <defs>
+                                    <linearGradient id="coreGrad" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.8"/>
+                                        <stop offset="100%" stop-color="#22D3EE" stop-opacity="0.8"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </button>
+
+                    <div class="energy-status-card">
+                        <div class="energy-info-row">
+                            <span>Энергия</span>
+                            <span><strong id="energy-current">100</strong> / <span id="energy-max">100</span></span>
+                        </div>
+                        <div class="energy-bar-bg">
+                            <div class="energy-bar-fill" id="energy-fill" style="width: 100%;"></div>
+                        </div>
+                        <div class="energy-regen-hint">Восстановление: <span id="regen-rate">2</span>/сек</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Вкладка 2: Улучшения -->
+            <section class="tab-pane" id="tab-upgrades" data-tab="upgrades">
+                <div class="section-header">
+                    <h2>Прокачка системы</h2>
+                    <p>Улучшайте параметры ядра и автоматизируйте добычу</p>
+                </div>
+                <div class="upgrades-list" id="upgrades-list">
+                    <!-- Заполняется динамически из JS -->
+                </div>
+            </section>
+
+            <!-- Вкладка 3: Задания -->
+            <section class="tab-pane" id="tab-quests" data-tab="quests">
+                <div class="section-header">
+                    <h2>Миссии ИИ</h2>
+                    <p>Выполняйте задачи и получайте ценные награды</p>
+                </div>
+                <div class="quests-list" id="quests-list">
+                    <!-- Заполняется динамически из JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Нижняя навигация -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-target="game" aria-label="Вкладка Игра">
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Игра</span>
+            </button>
+            <button class="nav-item" data-target="upgrades" aria-label="Вкладка Улучшения">
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Улучшения</span>
+            </button>
+            <button class="nav-item" data-target="quests" aria-label="Вкладка Задания">
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                    <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Задания</span>
+            </button>
+        </nav>
+
+        <!-- Модальное окно офлайн-дохода -->
+        <div class="modal-overlay" id="offline-modal">
+            <div class="modal-card">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" fill="none" stroke="#22D3EE" stroke-width="2"/>
+                        <path d="M12 6v6l4 2" stroke="#22D3EE" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3>С возвращением!</h3>
+                <p>Ваша система функционировала автономно в течение <strong id="offline-time">0 часов</strong>.</p>
+                <div class="offline-earned-box">
+                    <span>Заработано монет:</span>
+                    <strong id="offline-earned">+0</strong>
+                </div>
+                <button class="btn-primary" id="offline-close">Забрать награду</button>
+            </div>
+        </div>
+
+        <!-- Модальное окно ежедневных наград -->
+        <div class="modal-overlay" id="daily-modal">
+            <div class="modal-card">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Ежедневные награды</h3>
+                <p>Заходите каждый день и получайте ценные бонусы!</p>
+                <div class="daily-list" id="daily-list" style="width: 100%; max-height: 240px; overflow-y: auto;">
+                    <!-- Заполняется динамически -->
+                </div>
+                <button class="btn-primary" id="daily-close">Закрыть</button>
+            </div>
+        </div>
+
+        <!-- Модальное окно статистики -->
+        <div class="modal-overlay" id="stats-modal">
+            <div class="modal-card">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true">
+                        <path d="M18 20V10M12 20V4M6 20v-6" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Статистика</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span>Всего тапов</span>
+                        <strong id="stat-taps">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Заработано монет</span>
+                        <strong id="stat-coins">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Улучшений куплено</span>
+                        <strong id="stat-upgrades">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Уровень системы</span>
+                        <strong id="stat-level">1</strong>
+                    </div>
+                </div>
+                <button class="btn-primary" id="stats-close">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
